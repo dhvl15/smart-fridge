@@ -1,4 +1,4 @@
-package co.appbrewery.flash_chat;
+package co.appbrewery.smart_fridge;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

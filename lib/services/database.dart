@@ -1,5 +1,5 @@
-import 'package:flash_chat/models/fridge.dart';
-import 'package:flash_chat/models/user.dart';
+import 'package:smart_fridge/models/fridge.dart';
+import 'package:smart_fridge/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
@@ -8,7 +8,7 @@ class DatabaseService {
   DatabaseService({ this.uid });
 
   // collection reference
-  final CollectionReference fridgeCollection = FirebaseFirestore.instance.collection('smartFridge');
+  final CollectionReference fridgeCollection = FirebaseFirestore.instance.collection('smart_fridge');
   
   Future<void> updateUserData({String name}) async {
     //fridgeCollection.doc(uid).collection('fridge').add({'name' : '','expiryDate' : DateTime.now(),});

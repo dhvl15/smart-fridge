@@ -1,9 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flash_chat/screens/home_screen.dart';
+import 'package:smart_fridge/screens/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flash_chat/screens/welcome_screen.dart';
-import 'package:flash_chat/screens/login_screen.dart';
-import 'package:flash_chat/screens/registration_screen.dart';
+import 'package:smart_fridge/screens/welcome_screen.dart';
+import 'package:smart_fridge/screens/login_screen.dart';
+import 'package:smart_fridge/screens/registration_screen.dart';
 //import 'dart:html';
 
 void main() async {

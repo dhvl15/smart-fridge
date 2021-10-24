@@ -1,5 +1,5 @@
-import 'package:flash_chat/models/user.dart';
-import 'package:flash_chat/services/database.dart';
+import 'package:smart_fridge/models/user.dart';
+import 'package:smart_fridge/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {

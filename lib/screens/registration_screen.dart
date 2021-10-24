@@ -1,11 +1,11 @@
 //import 'package:firebase_core/firebase_core.dart';
 import 'dart:math';
 
-import 'package:flash_chat/screens/home_screen.dart';
-import 'package:flash_chat/services/auth.dart';
+import 'package:smart_fridge/screens/home_screen.dart';
+import 'package:smart_fridge/services/auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flash_chat/widgets/roundedButton.dart';
-import 'package:flash_chat/constants.dart';
+import 'package:smart_fridge/widgets/roundedButton.dart';
+import 'package:smart_fridge/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 

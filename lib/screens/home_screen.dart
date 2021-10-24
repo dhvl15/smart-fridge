@@ -1,11 +1,11 @@
-import 'package:flash_chat/models/fridge.dart';
-import 'package:flash_chat/models/user.dart';
-import 'package:flash_chat/screens/login_screen.dart';
-import 'package:flash_chat/services/auth.dart';
-import 'package:flash_chat/services/database.dart';
-import 'package:flash_chat/widgets/fridgeList.dart';
+import 'package:smart_fridge/models/fridge.dart';
+import 'package:smart_fridge/models/user.dart';
+import 'package:smart_fridge/screens/login_screen.dart';
+import 'package:smart_fridge/services/auth.dart';
+import 'package:smart_fridge/services/database.dart';
+import 'package:smart_fridge/widgets/fridgeList.dart';
 import 'package:flutter/material.dart';
-import 'package:flash_chat/constants.dart';
+import 'package:smart_fridge/constants.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 

@@ -1,9 +1,9 @@
-import 'package:flash_chat/models/fridge.dart';
-import 'package:flash_chat/models/user.dart';
-import 'package:flash_chat/services/auth.dart';
+import 'package:smart_fridge/models/fridge.dart';
+import 'package:smart_fridge/models/user.dart';
+import 'package:smart_fridge/services/auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flash_chat/models/fridge.dart';
-import 'package:flash_chat/widgets/fridgeTile.dart';
+import 'package:smart_fridge/models/fridge.dart';
+import 'package:smart_fridge/widgets/fridgeTile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

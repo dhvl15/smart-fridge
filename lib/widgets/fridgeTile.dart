@@ -1,5 +1,5 @@
-import 'package:flash_chat/models/fridge.dart';
-import 'package:flash_chat/services/database.dart';
+import 'package:smart_fridge/models/fridge.dart';
+import 'package:smart_fridge/services/database.dart';
 import 'package:flutter/material.dart';
 
 class FridgeTile extends StatelessWidget {
