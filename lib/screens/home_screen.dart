@@ -80,6 +80,12 @@ class _HomeScreenState extends State<HomeScreen> {
               backgroundColor: Colors.teal.shade800,
               onPressed: ()async{
                 //DatabaseService(uid: currentUser.uid).updatFridgeData(name: 'apple');
+                _itemDateController.clear();
+                _itemNameController.clear();
+                  setState(() {
+                    itemName = null;
+                    expiryDate = null;
+                  });
                 _displayTextInputDialog(context);
               },
               child: Icon(Icons.post_add),
@@ -88,9 +94,19 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void clear(){
+    _itemDateController.clear();
+    _itemNameController.clear();
+    setState(() {
+      itemName = null;
+      expiryDate = null;
+    });
+  }
+
 
   //Dialog box
   Future<void> _displayTextInputDialog(BuildContext context) async {
+    //clear();
     return showDialog(
       context: context,
       builder: (context) {
@@ -105,7 +121,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: TextFormField(
                     textAlign: TextAlign.center,
                     textAlignVertical: TextAlignVertical.center,
-                    keyboardType: TextInputType.datetime,
                     controller: _itemNameController,
                     decoration: kTextFieldDecoration.copyWith(hintText: 'Enter item name',),
                     onChanged: (value){
@@ -119,6 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Expanded(
                     child: TextFormField(
                       textAlign: TextAlign.center,
+                      keyboardType: TextInputType.datetime,
                       textAlignVertical: TextAlignVertical.center,
                       controller: _itemDateController,
                       decoration: kTextFieldDecoration.copyWith(hintText: 'Enter item date'),
@@ -141,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         
                         if (expiryDate!=null) {
                           _itemDateController.text = DateFormat('dd-MM-yyyy').format(expiryDate);
-}
+                          }
                       });
                       
                     }, 
