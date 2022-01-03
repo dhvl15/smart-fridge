@@ -18,7 +18,7 @@ class DatabaseService {
     );
   }
 
-  // brew list from snapshot
+  // fridge list from snapshot
   List<Fridge> _fridgeListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc){
       //print(doc.data);
@@ -58,7 +58,7 @@ class DatabaseService {
     return await fridgeCollection.doc(uid).collection('fridge').add(
       {
         'name' : name ?? 'item',
-        'expiryDate' : expiryDate != null ? expiryDate.toLocal() : DateTime.now().toLocal().add(const Duration(days:  3))
+        'expiryDate' : expiryDate != null ? expiryDate.toLocal() : DateTime.now().toLocal().add(const Duration(days:  2))
       });
   }
 

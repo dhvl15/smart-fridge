@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:smart_fridge/screens/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -6,13 +7,16 @@ import 'package:smart_fridge/screens/login_screen.dart';
 import 'package:smart_fridge/screens/registration_screen.dart';
 //import 'dart:html';
 
+List<CameraDescription> cameras;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(FlashChat());
+  cameras = await availableCameras();
+  runApp(SmartFridge());
 }
 
-class FlashChat extends StatelessWidget {
+class SmartFridge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -25,7 +29,7 @@ class FlashChat extends StatelessWidget {
       routes: {
         WelcomeScreen.id: (context) => WelcomeScreen(),
         LoginScreen.id: (context) => LoginScreen(),
-        HomeScreen.id: (context) => HomeScreen(),
+        HomeScreen.id: (context) => HomeScreen(cameras : cameras),
         RegistrationScreen.id: (context) => RegistrationScreen(),
       },
     );

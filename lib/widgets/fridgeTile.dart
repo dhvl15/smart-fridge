@@ -33,7 +33,7 @@ class FridgeTile extends StatelessWidget {
           leading: CircleAvatar(
             radius: 25.0,
             backgroundColor: Colors.teal.shade600,
-            backgroundImage: AssetImage('images/logo2.png'),
+            backgroundImage: AssetImage('assets/images/logo2.png'),
           ),
           title: Text(fridgeItem.name),
           subtitle: checkDate(),

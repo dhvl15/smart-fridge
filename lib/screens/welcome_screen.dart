@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:smart_fridge/screens/login_screen.dart';
 import 'package:smart_fridge/screens/registration_screen.dart';
 import 'package:smart_fridge/widgets/roundedButton.dart';
@@ -67,7 +66,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 Hero(
                   tag: "logo",
                   child: Container(
-                    child: Image.asset('images/refrigerator.png'),
+                    child: Image.asset('assets/images/refrigerator.png'),
                     height: 60.0,
                   ),
                 ),

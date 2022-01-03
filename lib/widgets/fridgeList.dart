@@ -2,7 +2,6 @@ import 'package:smart_fridge/models/fridge.dart';
 import 'package:smart_fridge/models/user.dart';
 import 'package:smart_fridge/services/auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:smart_fridge/models/fridge.dart';
 import 'package:smart_fridge/widgets/fridgeTile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

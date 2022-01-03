@@ -1,12 +1,8 @@
-//import 'package:firebase_core/firebase_core.dart';
-import 'dart:math';
-
 import 'package:smart_fridge/screens/home_screen.dart';
 import 'package:smart_fridge/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_fridge/widgets/roundedButton.dart';
 import 'package:smart_fridge/constants.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -59,7 +55,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     tag: "logo",
                     child: Container(
                       height: 200.0,
-                      child: Image.asset('images/refrigerator.png'),
+                      child: Image.asset('assets/images/refrigerator.png'),
                     ),
                   ),
                 ),
@@ -79,7 +75,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 SizedBox(
                   height: 8.0,
                 ),
-                TextField(
+                TextFormField(
                   textAlign: TextAlign.center,
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (value) {
@@ -88,11 +84,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   },
                   decoration:
                       kTextFieldDecoration.copyWith(hintText: "Enter your email"),
+                  validator: (value) {
+                    if(!value.startsWith(RegExp(r'[A-Z][a-z]'))){
+                      return 'enter valid email';
+                    }else if (!value.contains('@')) {
+                      return 'enter valid email';
+                    } else if(!value.contains('.')){
+                      return 'enter valid email';
+                    }else{
+                      return null;
+                    }
+                  },
                 ),
                 SizedBox(
                   height: 8.0,
                 ),
-                TextField(
+                TextFormField(
                   textAlign: TextAlign.center,
                   obscureText: true,
                   onChanged: (value) {
@@ -101,6 +108,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   },
                   decoration: kTextFieldDecoration.copyWith(
                       hintText: "Enter your password"),
+                  validator: (value){
+                    if(value.length < 6){
+                      return 'minimum 6 characters required';
+                    }else{
+                      return null;
+                    }
+                  },
                 ),
                 SizedBox(
                   height: 24.0,

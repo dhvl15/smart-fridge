@@ -1,4 +1,4 @@
-package co.appbrewery.smart_fridge;
+package com.dj.smart_fridge;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

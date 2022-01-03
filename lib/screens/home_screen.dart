@@ -1,6 +1,8 @@
+import 'package:camera/camera.dart';
 import 'package:smart_fridge/models/fridge.dart';
 import 'package:smart_fridge/models/user.dart';
 import 'package:smart_fridge/screens/login_screen.dart';
+import 'package:smart_fridge/screens/object_detection/live_camera.dart';
 import 'package:smart_fridge/services/auth.dart';
 import 'package:smart_fridge/services/database.dart';
 import 'package:smart_fridge/widgets/fridgeList.dart';
@@ -11,6 +13,8 @@ import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   static const id = "home_screen";
+  final List<CameraDescription> cameras;
+  HomeScreen({this.cameras});
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -28,6 +32,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     currentUser = _auth.getCurrentUser();
+    // loadModel();
+    // initCamera();
   }
 
   @override
@@ -42,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
           //   padding: const EdgeInsets.only(left : 10.0),
           //   child: Hero(
           //      tag: "logo",
-          //     child: Image.asset('images/refrigerator.png',height: 40,)),
+          //     child: Image.asset('assets/images/refrigerator.png',height: 40,)),
           // ),
           //leadingWidth: 50,
           title: Text('MY FRIDGE', style: TextStyle(fontWeight: FontWeight.bold),),
@@ -58,38 +64,51 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               },
             ),
-            // FlatButton.icon(
-            //   icon: Icon(Icons.settings),
-            //   label: Text('settings'),
-            //   onPressed: () => _showSettingsPanel(),
-            // )
           ],
         ),
         body: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
               colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.dstATop),
-              image: AssetImage('images/empty.jpg'),
+              image: AssetImage('assets/images/empty.jpg'),
               fit: BoxFit.cover,
             ),
           ),
           child: FridgeList()
         ),
         //floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
-        floatingActionButton:  FloatingActionButton(
-              backgroundColor: Colors.teal.shade800,
-              onPressed: ()async{
-                //DatabaseService(uid: currentUser.uid).updatFridgeData(name: 'apple');
-                _itemDateController.clear();
-                _itemNameController.clear();
-                  setState(() {
-                    itemName = null;
-                    expiryDate = null;
-                  });
-                _displayTextInputDialog(context);
-              },
-              child: Icon(Icons.post_add),
-          ),
+        floatingActionButton:  Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            FloatingActionButton(
+                  backgroundColor: Colors.teal.shade800,
+                  onPressed: ()async{
+                    //itemName = null;
+                    itemName = await Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => LiveFeed(widget.cameras)));
+                    if(itemName!=null){
+                      DatabaseService(uid: currentUser.uid).updatFridgeData(name: itemName);
+                    }
+                  },
+                  child: Icon(Icons.linked_camera_rounded)
+              ),
+              SizedBox(height: 5,),
+              FloatingActionButton(
+                  backgroundColor: Colors.teal.shade800,
+                  onPressed: ()async{
+                    //DatabaseService(uid: currentUser.uid).updatFridgeData(name: 'apple');
+                    _itemDateController.clear();
+                    _itemNameController.clear();
+                      setState(() {
+                        itemName = null;
+                        expiryDate = null;
+                      });
+                    _displayTextInputDialog(context);
+                  },
+                  child: Icon(Icons.post_add),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -187,6 +206,11 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
 
