@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:smart_fridge/models/fridge.dart';
 import 'package:smart_fridge/screens/login_screen.dart';
 import 'package:smart_fridge/screens/registration_screen.dart';
+import 'package:smart_fridge/services/notification.dart';
 import 'package:smart_fridge/widgets/roundedButton.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -19,10 +22,13 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   void initState() {
     super.initState();
 
-    // Firebase.initializeApp().whenComplete(() {
-    //   print("firebase initialized");
-    //   setState(() {});
-    // });
+    NotificationService().init(_onDidReceiveLocalNotification).whenComplete((){
+        NotificationService().handleApplicationWasLaunchedFromNotification("");
+        NotificationService().showNotification(Fridge(name: "test", expiryDate: Timestamp.now(),id: null), "welcome");
+      }  
+    ).catchError((e){
+      print(e.toString());
+    });
 
     controller = AnimationController(
       vsync: this,
@@ -106,4 +112,27 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       ),
     );
   }
+
+  Future<dynamic> _onDidReceiveLocalNotification(
+    int id,
+    String title,
+    String body,
+    String payload) async {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) =>
+          AlertDialog(
+            title: Text(title ?? ''),
+            content: Text(body ?? ''),
+            actions: [
+              TextButton(
+                child: Text("Ok"),
+                  onPressed: () async {
+                    NotificationService().handleApplicationWasLaunchedFromNotification(payload ?? '');
+                }
+              )
+            ]
+          )
+      );
+    }
 }

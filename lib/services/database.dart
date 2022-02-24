@@ -1,6 +1,7 @@
 import 'package:smart_fridge/models/fridge.dart';
 import 'package:smart_fridge/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:smart_fridge/services/notification.dart';
 
 class DatabaseService {
 
@@ -17,7 +18,7 @@ class DatabaseService {
     },
     );
   }
-
+ 
   // fridge list from snapshot
   List<Fridge> _fridgeListFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc){
@@ -34,9 +35,8 @@ class DatabaseService {
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
     return UserData(
       uid: uid,
-       name: snapshot.get('name'),
-        strength: snapshot.get('strength'), 
-        sugars: snapshot.get('sugars'),
+      name: snapshot.get('name'), 
+      imageUrl: snapshot.get('imageUrl'),
     );
   }
 
@@ -59,6 +59,9 @@ class DatabaseService {
       {
         'name' : name ?? 'item',
         'expiryDate' : expiryDate != null ? expiryDate.toLocal() : DateTime.now().toLocal().add(const Duration(days:  2))
+      }).whenComplete((){
+        NotificationService().scheduleNotificationForItem(
+          Fridge(name: name,expiryDate: Timestamp.fromDate(expiryDate), id: null), "$name will expire soon!");
       });
   }
 

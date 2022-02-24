@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'package:path/path.dart' as path;
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:smart_fridge/screens/home_screen.dart';
 import 'package:smart_fridge/services/auth.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +16,7 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
+  FirebaseStorage storage = FirebaseStorage.instance;
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -52,14 +56,32 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 Center(
-                  child: Flexible(
-                    child: Hero(
-                      tag: "logo",
-                      child: Container(
-                        height: 200.0,
-                        child: Image.asset('assets/images/refrigerator.png'),
+                  child: Stack(
+                    children: [
+                      Hero(
+                        tag: "logo",
+                        child: Container(
+                          height: 200.0,
+                          child: Image.asset('assets/images/refrigerator.png'),
+                        ),
                       ),
-                    ),
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.blueAccent,
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: IconButton(
+                            color: Colors.white,
+                            iconSize: 30,
+                            onPressed: (){
+                              _upload('camera');
+                            }, 
+                            icon: Icon(Icons.add_a_photo_rounded)),
+                        ))
+                    ],
                   ),
                 ),
                 SizedBox(
@@ -154,5 +176,57 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
+  // Select and image from the gallery or take a picture with the camera
+  // Then upload to Firebase Storage
+  Future<void> _upload(String inputSource) async {
+    final picker = ImagePicker();
+    XFile pickedImage;
+    try {
+      pickedImage = await picker.pickImage(
+          source: inputSource == 'camera'
+              ? ImageSource.camera
+              : ImageSource.gallery,
+          maxWidth: 1920);
 
+      final String fileName = path.basename(pickedImage.path);
+      File imageFile = File(pickedImage.path);
+
+      try {
+        // Uploading the selected image with some custom meta data
+        TaskSnapshot snapshot = await storage.ref(fileName).putFile(
+            imageFile,
+            SettableMetadata(customMetadata: {
+              'uploaded_by': 'A bad guy',
+              'description': 'Some description...'
+            }));
+
+        if (snapshot.state == TaskState.success) {
+            final String downloadUrl =
+                await snapshot.ref.getDownloadURL();
+            final snackBar =
+                SnackBar(content: Text('Yay! Success'));
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          } else {
+            print(
+                'Error from image repo ${snapshot.state.toString()}');
+            throw ('This file is not an image');
+          }
+
+        // Refresh the UI
+        setState(() {});
+      } on FirebaseException catch (error) {
+        print(error);
+      }
+    } catch (err) {
+        print(err);
+    }
+  }
 }
+
+
+
+
+
+
+
+  

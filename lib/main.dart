@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:smart_fridge/screens/welcome_screen.dart';
 import 'package:smart_fridge/screens/login_screen.dart';
 import 'package:smart_fridge/screens/registration_screen.dart';
-//import 'dart:html';
 
 List<CameraDescription> cameras;
 
@@ -25,6 +24,7 @@ class SmartFridge extends StatelessWidget {
       //     bodyText2: TextStyle(color: Colors.black54),
       //   ),
       // ),
+      debugShowCheckedModeBanner: false,
       initialRoute: WelcomeScreen.id,
       routes: {
         WelcomeScreen.id: (context) => WelcomeScreen(),
