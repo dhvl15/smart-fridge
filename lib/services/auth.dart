@@ -5,11 +5,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 class AuthService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  UserData _userData;
 
   // create user obj based on firebase user
   MyUser _userFromFirebaseUser(User user) {
     return user != null ? MyUser(uid: user.uid) : null;
-  }
+  }  
 
   // auth change user stream
   Stream<MyUser> get user {
@@ -36,13 +37,13 @@ class AuthService {
   }
 
   // register with email and password
-  Future register({String email, String password, String name}) async {
+  Future register({String email, String password, String name, String imageUrl}) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       User user = result.user;
 
       // create a new document for the user with the uid
-      await DatabaseService(uid: user.uid).updateUserData(name : name);
+      await DatabaseService(uid: user.uid).updateUserData(name : name,email: email, imageUrl: imageUrl);
       return _userFromFirebaseUser(user);
     } catch (error) {
       print(error.toString());

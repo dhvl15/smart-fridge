@@ -11,10 +11,12 @@ class DatabaseService {
   // collection reference
   final CollectionReference fridgeCollection = FirebaseFirestore.instance.collection('smart_fridge');
   
-  Future<void> updateUserData({String name}) async {
+  Future<void> updateUserData({String name, String imageUrl, String email}) async {
     //fridgeCollection.doc(uid).collection('fridge').add({'name' : '','expiryDate' : DateTime.now(),});
     return await fridgeCollection.doc(uid).set({
       'name': name,
+      'imageUrl':imageUrl,
+      'email':email,
     },
     );
   }

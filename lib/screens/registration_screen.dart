@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:smart_fridge/screens/home_screen.dart';
 import 'package:smart_fridge/services/auth.dart';
 import 'package:flutter/material.dart';

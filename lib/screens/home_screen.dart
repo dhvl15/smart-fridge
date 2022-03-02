@@ -3,6 +3,7 @@ import 'package:smart_fridge/models/fridge.dart';
 import 'package:smart_fridge/models/user.dart';
 import 'package:smart_fridge/screens/login_screen.dart';
 import 'package:smart_fridge/screens/object_detection/live_camera.dart';
+import 'package:smart_fridge/screens/update_page.dart';
 import 'package:smart_fridge/services/auth.dart';
 import 'package:smart_fridge/services/database.dart';
 import 'package:smart_fridge/widgets/fridgeList.dart';
@@ -55,9 +56,11 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Colors.teal,
           elevation: 0.0,
           actions: <Widget>[
-            TextButton.icon(
-              icon: Icon(Icons.person_outlined, color: Colors.black,),
-              label: Text('logout', style: TextStyle(color: Colors.black),),
+            IconButton(onPressed: (){
+              Navigator.pushNamed(context, UpdateScreen.id);
+            }, icon: Icon(Icons.person_outlined, color: Colors.black,),),
+            TextButton(
+              child: Text('logout', style: TextStyle(color: Colors.black),),
               onPressed: () async {
                 _auth.signOut().then((value) {
                   Navigator.popAndPushNamed(context, LoginScreen.id);

@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:smart_fridge/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:smart_fridge/screens/update_page.dart';
 import 'package:smart_fridge/screens/welcome_screen.dart';
 import 'package:smart_fridge/screens/login_screen.dart';
 import 'package:smart_fridge/screens/registration_screen.dart';
@@ -31,6 +32,7 @@ class SmartFridge extends StatelessWidget {
         LoginScreen.id: (context) => LoginScreen(),
         HomeScreen.id: (context) => HomeScreen(cameras : cameras),
         RegistrationScreen.id: (context) => RegistrationScreen(),
+        UpdateScreen.id: (context) => UpdateScreen(),
       },
     );
   }
