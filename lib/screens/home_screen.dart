@@ -84,6 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             FloatingActionButton(
+              heroTag: "addItem",
                   backgroundColor: Colors.teal.shade800,
                   onPressed: ()async{
                     //itemName = null;
@@ -97,6 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               SizedBox(height: 5,),
               FloatingActionButton(
+                heroTag: "liveFeed",
                   backgroundColor: Colors.teal.shade800,
                   onPressed: ()async{
                     //DatabaseService(uid: currentUser.uid).updatFridgeData(name: 'apple');

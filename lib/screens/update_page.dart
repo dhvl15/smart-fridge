@@ -4,8 +4,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:smart_fridge/models/user.dart';
-import 'package:smart_fridge/screens/home_screen.dart';
-import 'package:smart_fridge/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_fridge/services/database.dart';
 import 'package:smart_fridge/widgets/roundedButton.dart';
@@ -20,19 +18,17 @@ class UpdateScreen extends StatefulWidget {
 
 class _UpdateScreenState extends State<UpdateScreen> {
   FirebaseStorage storage = FirebaseStorage.instance;
-  final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   String error = '';
   String email,password,name, imageUrl;
   bool showSpinner = false;
-  MyUser _user; UserData _userData;
+  UserData _userData;
   File imageFile;
   XFile pickedImage;
   @override
   void initState() {
     super.initState();
-    getUser();
   }
 
   @override
@@ -40,282 +36,150 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
     MyUser user = Provider.of<MyUser>(context);
 
-    return StreamBuilder<UserData>(
-      stream: DatabaseService(uid: user.uid).userData,
-      builder: (context, snapshot) {
-        if(snapshot.hasData){
-          _userData = snapshot.data;
-        }
-        return ModalProgressHUD(
-        inAsyncCall: !snapshot.hasData,
-        //progressIndicator: LinearProgressIndicator(),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Center(
-                  child: Stack(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius : BorderRadius.circular(100)
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar : AppBar(
+        elevation: 0.0,
+        title: Text('Profile Page'),
+      ),
+      backgroundColor: Colors.white,
+      body: StreamBuilder<UserData>(
+        stream: DatabaseService(uid: user.uid).userData,
+        builder: (context, snapshot) {
+          if(snapshot.hasData){
+            _userData = snapshot.data;
+            return ModalProgressHUD(
+              inAsyncCall: showSpinner,
+              child: SingleChildScrollView(
+                child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 50),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Center(
+                        child: Stack(
+                          children: [
+                  //                       Container(
+                  //                         decoration: BoxDecoration(
+                  //                           borderRadius : BorderRadius.circular(100),
+                  //                           image: DecorationImage(
+                  //                             image : imageFile != null 
+                  // ? FileImage(imageFile)
+                  // : snapshot.data.imageUrl == null || snapshot.data.imageUrl == "" ? AssetImage('assets/images/refrigerator.png') : NetworkImage(snapshot.data.imageUrl)),
+                  //                         ),
+                  //                         height: 200.0,
+                  //                         // child: snapshot.data.imageUrl == null || snapshot.data.imageUrl == ""
+                  //                         //   ? imageFile == null 
+                  //                         //     ? Image.asset('assets/images/refrigerator.png')
+                  //                         //     : Image.file(imageFile)
+                  //                         //   : Image.network(snapshot.data.imageUrl),
+                  //                       ),
+                            CircleAvatar(
+                              radius: 100,
+                              backgroundImage : imageFile != null 
+                                ? FileImage(imageFile)
+                                : snapshot.data.imageUrl == null || snapshot.data.imageUrl == "" ? AssetImage('assets/images/refrigerator.png') : NetworkImage(snapshot.data.imageUrl),
+                            ),
+                            Positioned(
+                              top: 0,
+                              right:0,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.blueAccent,
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: IconButton(
+                                  color: Colors.white,
+                                  iconSize: 30,
+                                  onPressed: (){
+                                    _upload('camera');
+                                  }, 
+                                  icon: Icon(Icons.add_a_photo_rounded)),
+                              ))
+                          ],
                         ),
-                        height: 200.0,
-                        child: _userData.imageUrl == null 
-                          ? imageFile == null 
-                            ? Image.asset('assets/images/refrigerator.png')
-                            : Image.file(imageFile)
-                          : Image.network(_userData.imageUrl),
                       ),
-                      Positioned(
-                        top: 0,
-                        right: 0,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.blueAccent,
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          child: IconButton(
-                            color: Colors.white,
-                            iconSize: 30,
-                            onPressed: (){
-                              _upload('camera');
-                            }, 
-                            icon: Icon(Icons.add_a_photo_rounded)),
-                        ))
+                      SizedBox(
+                        height: 48.0,
+                      ),
+                      
+                      TextFormField(
+                        initialValue: _userData.name,
+                        textAlign: TextAlign.center,
+                        onChanged: (value) {
+                          setState(() {
+                            name = value;
+                          });
+                        },
+                        decoration: kTextFieldDecoration.copyWith(
+                            hintText: "Enter your name"),
+                      ),
+                      SizedBox(
+                        height: 8.0,
+                      ),
+                      TextFormField(
+                        enabled: false,
+                        initialValue: _userData.email,
+                        textAlign: TextAlign.center,
+                        keyboardType: TextInputType.emailAddress,
+                        onChanged: (value) {
+                          //Do something with the user input.
+                          email = value;
+                        },
+                        decoration:
+                            kTextFieldDecoration.copyWith(hintText: "Enter your email"),
+                        // validator: (value) {
+                        //   if(!value.startsWith(RegExp(r'[A-Z][a-z]'))){
+                        //     return 'enter valid email';
+                        //   }else if (!value.contains('@')) {
+                        //     return 'enter valid email';
+                        //   } else if(!value.contains('.')){
+                        //     return 'enter valid email';
+                        //   }else{
+                        //     return null;
+                        //   }
+                        // },
+                      ),
+                      SizedBox(
+                        height: 24.0,
+                      ),
+                      RoundedButton(
+                        onPressed: () async {
+                          if(_formKey.currentState.validate()){
+                          await DatabaseService(uid: user.uid).updateUserData(
+                              name : name ?? snapshot.data.name, 
+                              email : snapshot.data.email, 
+                              imageUrl : imageUrl ?? snapshot.data.imageUrl,
+                            ).catchError((e){
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text(e.toString()),
+                                behavior: SnackBarBehavior.fixed,
+                                backgroundColor: Colors.red.shade600,
+                              ));
+                          });
+                            Navigator.pop(context);
+                        }
+                        },
+                        title: "Update",
+                        colour: Colors.blueAccent,
+                      ),
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 48.0,
-                ),
-                
-                TextFormField(
-                  initialValue: _userData.name,
-                  textAlign: TextAlign.center,
-                  onChanged: (value) {
-                    setState(() {
-                      name = value;
-                    });
-                  },
-                  decoration: kTextFieldDecoration.copyWith(
-                      hintText: "Enter your name"),
-                ),
-                SizedBox(
-                  height: 8.0,
-                ),
-                TextFormField(
-                  enabled: false,
-                  initialValue: _userData.email,
-                  textAlign: TextAlign.center,
-                  keyboardType: TextInputType.emailAddress,
-                  onChanged: (value) {
-                    //Do something with the user input.
-                    email = value;
-                  },
-                  decoration:
-                      kTextFieldDecoration.copyWith(hintText: "Enter your email"),
-                  validator: (value) {
-                    if(!value.startsWith(RegExp(r'[A-Z][a-z]'))){
-                      return 'enter valid email';
-                    }else if (!value.contains('@')) {
-                      return 'enter valid email';
-                    } else if(!value.contains('.')){
-                      return 'enter valid email';
-                    }else{
-                      return null;
-                    }
-                  },
-                ),
-                SizedBox(
-                  height: 24.0,
-                ),
-                RoundedButton(
-                  onPressed: () async {
-                    if(_formKey.currentState.validate()){
-                    await DatabaseService(uid: user.uid).updateUserData(
-                        name : name ?? snapshot.data.name, 
-                        email : snapshot.data.email, 
-                        imageUrl : imageUrl ?? snapshot.data.imageUrl,
-                      ).catchError((e){
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(e.toString()),
-                          behavior: SnackBarBehavior.fixed,
-                          backgroundColor: Colors.red.shade600,
-                        ));
-                    });
-                      Navigator.pop(context);
-                  }
-                  },
-                  title: "Update",
-                  colour: Colors.blueAccent,
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-      }
+                        ),
+              ),
+            );
+          }else{
+            return ModalProgressHUD(inAsyncCall: true, child: Container());
+          }
+        }
+      ),
     );
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     key: _scaffoldKey,
-  //     appBar : AppBar(
-  //       //backgroundColor: Colors.brown[400],
-  //       elevation: 0.0,
-  //       title: Text('Profile Page'),
-  //       // actions: <Widget>[
-  //       //   TextButton.icon(
-  //       //     icon: Icon(Icons.person),
-  //       //     label: Text('Sign In',style: TextStyle(color: Colors.blueAccent),),
-  //       //     onPressed: () => Navigator.popAndPushNamed(context, ChatScreen.id),
-  //       //   ),
-  //       // ],
-  //     ),
-  //     backgroundColor: Colors.white,
-  //     body: ModalProgressHUD(
-  //       inAsyncCall: showSpinner,
-  //       //progressIndicator: LinearProgressIndicator(),
-  //       child: Padding(
-  //         padding: EdgeInsets.symmetric(horizontal: 24.0),
-  //         child: Form(
-  //           key: _formKey,
-  //           child: Column(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             crossAxisAlignment: CrossAxisAlignment.stretch,
-  //             children: <Widget>[
-  //               Center(
-  //                 child: Stack(
-  //                   children: [
-  //                     Container(
-  //                       decoration: BoxDecoration(
-  //                         borderRadius : BorderRadius.circular(100)
-  //                       ),
-  //                       height: 200.0,
-  //                       child: imageUrl == null 
-  //                         ? imageFile == null 
-  //                           ? Image.asset('assets/images/refrigerator.png')
-  //                           : Image.file(imageFile)
-  //                         : Image.network(imageUrl),
-  //                     ),
-  //                     Positioned(
-  //                       top: 0,
-  //                       right: 0,
-  //                       child: Container(
-  //                         decoration: BoxDecoration(
-  //                           color: Colors.blueAccent,
-  //                           borderRadius: BorderRadius.circular(50),
-  //                         ),
-  //                         child: IconButton(
-  //                           color: Colors.white,
-  //                           iconSize: 30,
-  //                           onPressed: (){
-  //                             _upload('camera');
-  //                           }, 
-  //                           icon: Icon(Icons.add_a_photo_rounded)),
-  //                       ))
-  //                   ],
-  //                 ),
-  //               ),
-  //               SizedBox(
-  //                 height: 48.0,
-  //               ),
-                
-  //               TextFormField(
-  //                 initialValue: name,
-  //                 textAlign: TextAlign.center,
-  //                 onChanged: (value) {
-  //                   //Do something with the user input.
-  //                   name = value;
-  //                 },
-  //                 decoration: kTextFieldDecoration.copyWith(
-  //                     hintText: "Enter your name"),
-  //               ),
-  //               SizedBox(
-  //                 height: 8.0,
-  //               ),
-  //               TextFormField(
-  //                 textAlign: TextAlign.center,
-  //                 keyboardType: TextInputType.emailAddress,
-  //                 onChanged: (value) {
-  //                   //Do something with the user input.
-  //                   email = value;
-  //                 },
-  //                 decoration:
-  //                     kTextFieldDecoration.copyWith(hintText: "Enter your email"),
-  //                 validator: (value) {
-  //                   if(!value.startsWith(RegExp(r'[A-Z][a-z]'))){
-  //                     return 'enter valid email';
-  //                   }else if (!value.contains('@')) {
-  //                     return 'enter valid email';
-  //                   } else if(!value.contains('.')){
-  //                     return 'enter valid email';
-  //                   }else{
-  //                     return null;
-  //                   }
-  //                 },
-  //               ),
-  //               SizedBox(
-  //                 height: 8.0,
-  //               ),
-  //               TextFormField(
-  //                 textAlign: TextAlign.center,
-  //                 obscureText: true,
-  //                 onChanged: (value) {
-  //                   //Do something with the user input.
-  //                   password = value;
-  //                 },
-  //                 decoration: kTextFieldDecoration.copyWith(
-  //                     hintText: "Enter your password"),
-  //                 validator: (value){
-  //                   if(value.length < 6){
-  //                     return 'minimum 6 characters required';
-  //                   }else{
-  //                     return null;
-  //                   }
-  //                 },
-  //               ),
-  //               SizedBox(
-  //                 height: 24.0,
-  //               ),
-  //               RoundedButton(
-  //                 onPressed: () async {
-  //                   if(_formKey.currentState.validate()){
-  //                   setState(() => showSpinner = true);
-  //                   //dynamic result = await 
-  //                   _auth.register(email:email, password:password,name:name).then((result) {
-  //                     if (result != null) {
-  //                       Navigator.pushNamedAndRemoveUntil(context, HomeScreen.id, (route) => false);
-  //                     }
-  //                     setState(() {
-  //                       showSpinner = false;
-  //                     });
-  //                   }).catchError((e){
-  //                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //                         content: Text(e.toString()),
-  //                         behavior: SnackBarBehavior.fixed,
-  //                         backgroundColor: Colors.red.shade600,
-  //                       ));
-  //                   });
-  //                 }
-  //                 },
-  //                 title: "Register",
-  //                 colour: Colors.blueAccent,
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 
   // Select and image from the gallery or take a picture with the camera
   // Then upload to Firebase Storage
@@ -332,6 +196,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
       setState(() {
         imageFile = File(pickedImage.path);
+        showSpinner = true;
       });
 
       try {
@@ -344,7 +209,16 @@ class _UpdateScreenState extends State<UpdateScreen> {
             }));
 
         if (snapshot.state == TaskState.success) {
-          imageUrl = await snapshot.ref.getDownloadURL();
+          String url = await snapshot.ref.getDownloadURL();
+
+          if(url!=null){
+            // Refresh the UI
+            setState(() {
+              imageUrl = url;
+              showSpinner=false;
+            });
+            print(imageUrl);
+          }
             // final snackBar =
             //     SnackBar(content: Text('Yay! Success'));
             // ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -353,11 +227,6 @@ class _UpdateScreenState extends State<UpdateScreen> {
                 'Error from image repo ${snapshot.state.toString()}');
             throw ('This file is not an image');
           }
-
-        // Refresh the UI
-        setState(() {
-          
-        });
       } on FirebaseException catch (error) {
         print(error);
       }
@@ -365,23 +234,4 @@ class _UpdateScreenState extends State<UpdateScreen> {
         print(err);
     }
   }
-
-  void getUser() async{
-    _user = AuthService().getCurrentUser();
-    _userData = await DatabaseService(uid: _user.uid).userData.single;
-    if(_userData != null){
-      setState(() {
-        name = _userData.name;
-        imageUrl = _userData.imageUrl;
-      });
-    }
-  }
 }
-
-
-
-
-
-
-
-  

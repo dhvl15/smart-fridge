@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 class AuthService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  UserData _userData;
 
   // create user obj based on firebase user
   MyUser _userFromFirebaseUser(User user) {
