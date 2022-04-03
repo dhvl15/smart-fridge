@@ -78,4 +78,22 @@ class DatabaseService {
     // });
   }
 
+  Future<List<Fridge>> getData(){
+    Query collection = fridgeCollection.doc(uid).collection('fridge').orderBy('expiryDate').where('expiryDate', isGreaterThanOrEqualTo: DateTime.now().toLocal(), isLessThanOrEqualTo: DateTime.now().toLocal().add(const Duration(days:  2)));
+    return collection.get().then((documents) {
+      if(documents.docs.isNotEmpty){
+        return documents.docs.map((doc){
+          print(doc.data().toString());
+          return Fridge(
+            id : doc.id,
+            name: doc.get('name') ?? '',
+            expiryDate: doc.get('expiryDate')
+          );
+        }).toList();
+      }else{
+        return [];
+      }
+    });
+  }
+
 }

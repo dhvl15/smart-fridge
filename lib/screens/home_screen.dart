@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:smart_fridge/constants.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   static const id = "home_screen";
@@ -26,15 +27,17 @@ class _HomeScreenState extends State<HomeScreen> {
   MyUser currentUser;
   TextEditingController _itemNameController = TextEditingController();
   TextEditingController _itemDateController = TextEditingController();
+  TextEditingController _numberController = TextEditingController();
   DateTime expiryDate;
   String itemName;
+  List<Fridge> temp;  
+  String phone;
 
   @override
   void initState() {
     super.initState();
     currentUser = _auth.getCurrentUser();
-    // loadModel();
-    // initCamera();
+    getData();
   }
 
   @override
@@ -216,6 +219,117 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void getData()async {
+    temp = await DatabaseService(uid: _auth.getCurrentUser().uid).getData();
+    if(temp.isNotEmpty){
+      //print(temp.toString());
+      dialog(context);
+    }
+  }
+
+  void dialog(BuildContext context)async {
+    
+    var res = await showDialog<String>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Column(
+              children: [
+                Text("Items Expiring Soon..."),
+                Text('contact store and order now!', style: TextStyle(fontSize: 12),)
+              ],
+            ),
+            content: Container(
+              width: double.maxFinite,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    child: TextFormField(
+                      controller: _numberController,
+                      keyboardType: TextInputType.number,
+                      onChanged: (value){
+                        setState(() {
+                          phone = value;
+                        });
+                      },
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Store Number',
+                          prefixIcon: Icon(Icons.call)),
+                      validator: (value) {
+                        if(value.length<10 || value.length>10){
+                          return "Enter valid phone number";
+                        }else{
+                          return null;
+                        }
+                      },
+                    ),
+                  ),
+                  Expanded(child: _buildListView()),
+                  ],
+              ),
+            ),
+            actions: [
+              TextButton(onPressed: (){Navigator.pop(context);}, child: Text('cancle')),
+              IconButton(onPressed: (){
+                Navigator.pop(context, "call");
+              }, icon: Icon(Icons.phone, color:Colors.green)),
+              IconButton(onPressed: (){
+                Navigator.pop(context, "message");
+              }, icon: Icon(Icons.message, color: Colors.blueAccent)),
+            ],
+          );
+        });
+    if (res == "call"){
+      if(_numberController.text.length == 10){
+        launch('tel://91${_numberController.text}');
+      } 
+    }else if(res == "message"){
+      if(_numberController.text.length == 10){
+        whatsapp();
+      } 
+    }
+  }
+
+  Widget _buildListView() {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: temp.length,
+      //separatorBuilder: (ctx, i) => Divider(height: 0),
+      itemBuilder: (context, index) {
+        final fridgeItem = temp[index];
+        return ListTile(
+            title: Text(
+              fridgeItem.name,
+              style: TextStyle(color: Colors.black),
+            ),
+            subtitle: Text('Expires on ${fridgeItem.expiryDate.toDate().day}/${fridgeItem.expiryDate.toDate().month}/${fridgeItem.expiryDate.toDate().year}'),
+            
+            );
+      },
+    );
+  }
+
+  void whatsapp() {
+    String items ='''''';
+    temp.forEach((element) {
+      items = items + "${element.name}\n";
+    });
+    try {
+      final url = "https://api.whatsapp.com/send?phone=91${_numberController.text}&text=" +
+          "shopping list \n\n"+
+              items+"\n\nPlease give me a call before you come to deliver.";
+      final encodeURL = Uri.encodeFull(url);
+
+      // print("final url to open:" + url);
+      // print("final url to open: encode url " + encodeURL);
+      launch(encodeURL);
+    }catch(error){
+      print("Launch Error:" + error.toString());
+    }
   }
 }
 
